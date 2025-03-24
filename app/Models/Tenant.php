@@ -2,29 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
-class MenuChild extends Model
+class Tenant extends Model
 {
-    use HasFactory, LogsActivity;
+    use LogsActivity;
 
     protected $fillable = [
-        'menu_id',
         'name',
-        'icon',
-        'route',
-        'ordering',
+        'domain',
     ];
-
-    public function menu(){
-        return $this->belongsTo(Menu::class);
-    }
 
     public function getActivitylogOptions(): LogOptions {
         return LogOptions::defaults()
             ->logOnly(['*']);
+    }
+
+    public function users() {
+        return $this->belongsToMany(User::class)->withPivot('is_owner');
     }
 }

@@ -10,6 +10,8 @@ Route::group([
 
     Route::get('/', App\Livewire\Cms\Dashboard::class)->name('dashboard');
 
+    // Tenant
+    require 'tenant.php';
     // Managements
     require 'managements.php';
 

@@ -30,15 +30,41 @@ class Permission extends BaseComponent
         'profile.edit',
         'profile.update',
         'profile.destroy',
-        'login',
+        'storage.local',
+        'debugbar.queries.explain',
+        'debugbar.cache.delete',
+        'debugbar.assets.css',
+        'debugbar.assets.js',
+        'debugbar.clockwork',
+        'debugbar.openhandler',
         'password.confirm',
         'password.update',
+        'login',
         'logout',
     ];
 
     public function mount($role = null) {
         $this->role = Role::findByName($role);
         $this->title = 'Role Permissions - ' . ucfirst($this->role->name);
+
+        // Check user role is not super admin
+        if(!auth()->user()->hasRole('superadmin')) {
+            $this->routeExcept = array_merge($this->routeExcept, [
+                'pulse',
+                'cms.logs',
+                'cms.management.menu',
+                'cms.management.menu.child',
+                'cms.management.role',
+                'cms.management.role-permission',
+                'cms.management.user',
+                'cms.management.access-control',
+                'cms.management.general-setting',
+                'cms.management.misc-setting',
+                'cms.management.mail-setting',
+                'cms.management.privacy-policy-setting',
+                'cms.management.term-of-service-setting',
+            ]);
+        }
 
         $this->getPermission();
         // dd($this->permissions);
@@ -65,6 +91,7 @@ class Permission extends BaseComponent
             }
         }
 
+
         // Get all permissions
         foreach ($this->role->permissions->pluck('name') as $permission) {
             $route = explode('.', $permission);
@@ -75,6 +102,7 @@ class Permission extends BaseComponent
              **/
             unset($route[0]);
             $route = implode('.', $route);
+            if(in_array($route, $this->routeExcept)) continue;
             $this->permissions[$route][$permission] = true;
         }
     }

@@ -21,7 +21,20 @@ class MenuSeeder extends Seeder
             'ordering' => '1',
         ]);
 
+        $this->tenantMenu();
         $this->managementMenu();
+    }
+
+    public function tenantMenu() {
+        // Tenant
+        $tenant = Menu::create([
+            'name' => 'Tenant',
+            'on' => 'cms',
+            'type' => 'item',
+            'icon' => 'fa fa-building',
+            'route' => 'cms.tenant',
+            'ordering' => '80',
+        ]);
     }
 
     public function managementMenu() {

@@ -31,8 +31,7 @@ class Menu extends Model
         return $this->hasMany(MenuChild::class, 'menu_id');
     }
 
-    public function getActivitylogOptions(): LogOptions
-    {
+    public function getActivitylogOptions(): LogOptions {
         return LogOptions::defaults()
             ->logOnly(['*']);
     }

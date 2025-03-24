@@ -1,52 +1,57 @@
 <?php
 
-namespace App\Livewire\Cms\Management;
+namespace App\Livewire\Cms;
 
-use App\Livewire\Forms\Cms\Management\FormUser;
-use App\Models\Role;
-use App\Models\User as UserModel;
+use App\Enums\Tenant as EnumsTenant;
+use App\Livewire\Forms\Cms\FormTenant;
+use App\Models\Tenant as TenantModel;
 use BaseComponent;
 
-class User extends BaseComponent
-{
-    public FormUser $form;
-    public $title = 'Management User';
+class Tenant extends BaseComponent {
+    public FormTenant $form;
+    public $title = 'Tenant';
 
     public $searchBy = [
             [
                 'name' => 'Name',
+                'field' => 'tenants.name',
+            ],
+            [
+                'name' => 'Domain',
+                'field' => 'tenants.domain',
+            ],
+            [
+                'name' => 'Owner',
                 'field' => 'users.name',
             ],
             [
-                'name' => 'Email',
+                'name' => 'Owner Email',
                 'field' => 'users.email',
             ],
             [
-                'name' => 'Role',
-                'field' => 'roles.name',
-            ],
+                'name' => 'Created At',
+                'field' => 'tenants.created_at',
+            ]
         ],
         $search = '',
         $paginate = 10,
-        $orderBy = 'users.name',
-        $order = 'asc';
-
-    public $roles = [];
+        $orderBy = 'tenants.created_at',
+        $order = 'desc';
 
     public function mount() {
         // Add modal for update password
         $this->addModal('updatePasswordModal');
-
-        // Get roles
-        $this->roles = Role::all();
     }
 
     public function render()
     {
-        $model = UserModel::query()
-            ->join('model_has_roles', 'model_has_roles.model_id', '=', 'users.id')
-            ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
-            ->select('users.*', 'roles.name as role');
+        $model = TenantModel::query()
+            ->join('tenant_user', function($join) {
+                $join->on('tenants.id', '=', 'tenant_user.tenant_id')
+                    ->where('tenant_user.is_owner', EnumsTenant::OWNER);
+            })
+            ->join('users', 'tenant_user.user_id', '=', 'users.id')
+            ->select('tenants.*', 'users.name as owner_name', 'users.email as owner_email');
 
         $get = $this->getDataWithFilter(
             model: $model,
@@ -61,7 +66,7 @@ class User extends BaseComponent
             $this->resetPage();
         }
 
-        return view('livewire.cms.management.user', compact('get'))->title($this->title);
+        return view('livewire.cms.tenant', compact('get'))->title($this->title);
     }
 
     public function editPassword($id) {

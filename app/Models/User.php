@@ -40,4 +40,8 @@ class User extends Authenticatable
     public function apiKeys() {
         return $this->hasMany(ApiKey::class);
     }
+
+    public function tenants() {
+        return $this->belongsToMany(Tenant::class)->withPivot('is_owner');
+    }
 }

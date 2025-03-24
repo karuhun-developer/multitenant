@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Models\FilterByTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -11,7 +12,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Setting extends Model implements HasMedia
 {
-    use HasFactory, LogsActivity, InteractsWithMedia;
+    use HasFactory, LogsActivity, InteractsWithMedia, FilterByTenant;
 
     protected $fillable = [
         'name',
@@ -31,11 +32,11 @@ class Setting extends Model implements HasMedia
         'mail_password',
         'mail_from_address',
         'mail_from_name',
+        'tenant_id',
     ];
 
     // Get the activity log options.
-    public function getActivitylogOptions(): LogOptions
-    {
+    public function getActivitylogOptions(): LogOptions {
         return LogOptions::defaults()->logOnly([
             'name',
             'email',
