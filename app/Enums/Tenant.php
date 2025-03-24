@@ -19,4 +19,18 @@ enum Tenant: int {
             self::MEMBER => 'badge bg-info text-white',
         };
     }
+
+    public static function printLabel($value): string {
+        return match ($value) {
+            self::OWNER->value => 'Owner',
+            self::MEMBER->value => 'Member',
+        };
+    }
+
+    public static function printColor($value): string {
+        return match ($value) {
+            self::OWNER->value => 'badge bg-success text-white',
+            self::MEMBER->value => 'badge bg-info text-white',
+        };
+    }
 }

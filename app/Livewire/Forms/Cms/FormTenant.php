@@ -61,12 +61,21 @@ class FormTenant extends Form implements FormCrudInterface
             'domain' => $this->tenant_domain,
         ]);
 
-        // Create admin role for tenant
-        $data['name'] = $this->tenant_domain . '_admin';
-        $data['base_name'] = 'admin';
-        $data['guard_name'] = 'web';
-        $data['tenant_id'] = $tenant->id;
-        $role = Role::create($data);
+        // Create owner role for tenant
+        $role = Role::create([
+            'name' => $this->tenant_domain . '_owner',
+            'base_name' => 'owner',
+            'guard_name' => 'web',
+            'tenant_id' => $tenant->id,
+        ]);
+
+        // Create user role for tenant
+        Role::create([
+            'name' => $this->tenant_domain . '_user',
+            'base_name' => 'user',
+            'guard_name' => 'web',
+            'tenant_id' => $tenant->id,
+        ]);
 
         // Create user
         $user = User::create([
