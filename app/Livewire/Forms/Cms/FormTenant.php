@@ -63,6 +63,7 @@ class FormTenant extends Form implements FormCrudInterface
 
         // Create admin role for tenant
         $data['name'] = $this->tenant_domain . '_admin';
+        $data['base_name'] = 'admin';
         $data['guard_name'] = 'web';
         $data['tenant_id'] = $tenant->id;
         $role = Role::create($data);
@@ -99,6 +100,13 @@ class FormTenant extends Form implements FormCrudInterface
             'name' => $this->user_name,
             'email' => $this->user_email,
         ]);
+
+        // Update role name
+        Role::where('tenant_id', $this->id)->get()->each(function($role) {
+            $role->update([
+                'name' => $this->tenant_domain . '_' . $role->base_name,
+            ]);
+        });
     }
 
     // Delete data

@@ -35,6 +35,15 @@
                                             Change Password
                                         </span>
                                     </button>
+                                    <a class="dropdown-item"
+                                        href="{{ route('cms.tenant.user', [
+                                            'tenant' => $d->id,
+                                        ]) }}">
+                                        <i class="fa fa-users"></i>
+                                        <span class="ms-2">
+                                            Users
+                                        </span>
+                                    </a>
                                 </x-acc-update-delete>
                             </tr>
                         @empty
