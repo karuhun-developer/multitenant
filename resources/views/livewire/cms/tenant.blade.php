@@ -38,7 +38,7 @@
                                     <a class="dropdown-item"
                                         href="{{ route('cms.tenant.user', [
                                             'tenant' => $d->id,
-                                        ]) }}">
+                                        ]) }}" wire:navigate>
                                         <i class="fa fa-users"></i>
                                         <span class="ms-2">
                                             Users
