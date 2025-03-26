@@ -212,6 +212,8 @@ class FormTenant extends Form implements FormCrudInterface
             'password.update',
             'login',
             'logout',
+            'cms.management.menu',
+            'cms.management.menu.child',
             'cms.tenant',
             'cms.tenant.user',
         ];
