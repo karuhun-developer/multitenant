@@ -36,7 +36,7 @@ class FormGeneral extends Form
     public $old_data;
 
     public function getData() {
-        $data = Setting::first();
+        $data = Setting::orderBy('id', 'desc')->first();
 
         $this->old_data = $data;
         $this->name = $data->name;

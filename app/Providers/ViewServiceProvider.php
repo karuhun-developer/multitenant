@@ -29,7 +29,7 @@ class ViewServiceProvider extends ServiceProvider
 
         // Pas setting
         try {
-            $settings = Setting::first();
+            $settings = Setting::orderBy('id', 'desc')->first();
             $settings->opengraph = json_decode($settings->opengraph, true);
             $settings->dulbincore = json_decode($settings->dulbincore, true);
             $settings->social_media = json_decode($settings->social_media, true);

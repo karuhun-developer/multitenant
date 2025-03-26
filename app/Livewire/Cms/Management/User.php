@@ -48,6 +48,12 @@ class User extends BaseComponent
             ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
             ->select('users.*', 'roles.name as role');
 
+        // Check user has tenant
+        if(auth()->user()->tenants()->first()?->id) {
+            $model->join('tenant_user', 'tenant_user.user_id', '=', 'users.id')
+                ->where('tenant_user.tenant_id', auth()->user()->tenants()->first()?->id);
+        }
+
         $get = $this->getDataWithFilter(
             model: $model,
             searchBy: $this->searchBy,

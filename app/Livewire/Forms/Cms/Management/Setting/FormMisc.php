@@ -12,7 +12,7 @@ class FormMisc extends Form
     public $google_analytics;
 
     public function getData() {
-        $data = Setting::first();
+        $data = Setting::orderBy('id', 'desc')->first();
 
         $this->google_analytics = $data->google_analytics;
     }
