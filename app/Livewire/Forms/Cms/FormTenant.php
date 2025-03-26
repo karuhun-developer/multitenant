@@ -212,6 +212,8 @@ class FormTenant extends Form implements FormCrudInterface
             'password.update',
             'login',
             'logout',
+            'cms.tenant',
+            'cms.tenant.user',
         ];
         $routeUser = [
             'cms.dashboard',

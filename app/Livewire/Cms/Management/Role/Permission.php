@@ -56,6 +56,8 @@ class Permission extends BaseComponent
                 'cms.management.menu.child',
                 'cms.management.user',
                 'cms.management.access-control',
+                'cms.tenant',
+                'cms.tenant.user',
                 // 'cms.management.role',
                 // 'cms.management.role-permission',
                 // 'cms.management.general-setting',
