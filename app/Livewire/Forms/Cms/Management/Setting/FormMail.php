@@ -36,7 +36,7 @@ class FormMail extends Form
     public $mail_from_name;
 
     public function getData() {
-        $data = Setting::orderBy('id', 'desc')->first();
+        $data = Setting::first();
 
         $this->mail_email_show = $data->mail_email_show;
         $this->mail_driver = $data->mail_driver;

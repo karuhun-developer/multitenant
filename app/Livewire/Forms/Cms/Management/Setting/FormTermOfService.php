@@ -12,9 +12,9 @@ class FormTermOfService extends Form
     public $term_of_service;
 
     public function getData() {
-        $setting = Setting::orderBy('id', 'desc')->first();
+        $data = Setting::first();
 
-        $this->term_of_service = $setting->term_of_service;
+        $this->term_of_service = $data->term_of_service;
     }
 
     public function save() {

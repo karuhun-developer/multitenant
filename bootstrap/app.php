@@ -13,7 +13,6 @@ use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withProviders([
-        \App\Providers\ViewServiceProvider::class,
         \Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
     ])
     ->withRouting(
@@ -41,6 +40,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'auth.api-key' => \App\Http\Middleware\AuthApiKey::class,
             'validate-role-permission' => \App\Http\Middleware\ValidateRolePermission::class,
+            'share-setting' => \App\Http\Middleware\ShareSetting::class,
         ]);
     })
 

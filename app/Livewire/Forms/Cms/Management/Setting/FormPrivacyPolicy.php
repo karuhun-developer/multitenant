@@ -12,9 +12,9 @@ class FormPrivacyPolicy extends Form
     public $privacy_policy;
 
     public function getData() {
-        $setting = Setting::orderBy('id', 'desc')->first();
+        $data = Setting::first();
 
-        $this->privacy_policy = $setting->privacy_policy;
+        $this->privacy_policy = $data->privacy_policy;
     }
 
     public function save() {
