@@ -54,15 +54,15 @@ class Permission extends BaseComponent
                 'cms.logs',
                 'cms.management.menu',
                 'cms.management.menu.child',
-                'cms.management.role',
-                'cms.management.role-permission',
                 'cms.management.user',
                 'cms.management.access-control',
-                'cms.management.general-setting',
-                'cms.management.misc-setting',
-                'cms.management.mail-setting',
-                'cms.management.privacy-policy-setting',
-                'cms.management.term-of-service-setting',
+                // 'cms.management.role',
+                // 'cms.management.role-permission',
+                // 'cms.management.general-setting',
+                // 'cms.management.misc-setting',
+                // 'cms.management.mail-setting',
+                // 'cms.management.privacy-policy-setting',
+                // 'cms.management.term-of-service-setting',
             ]);
         }
 

@@ -2,7 +2,7 @@
     <x-slot:page-title>
         {{ $title ?? '' }}
     </x-slot:page-title>
-
+    <x-acc-back route="cms.tenant" />
     <div class="card">
         <div class="card-header">
             <h5 class="card-title">{{ $title ?? '' }} Data</h5>

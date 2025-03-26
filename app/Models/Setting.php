@@ -55,6 +55,11 @@ class Setting extends Model implements HasMedia
             'mail_password',
             'mail_from_address',
             'mail_from_name',
+            'tenant_id',
         ]);
+    }
+
+    public function tenant() {
+        return $this->belongsTo(Tenant::class);
     }
 }
