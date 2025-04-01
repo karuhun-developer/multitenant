@@ -28,6 +28,14 @@
                                 <td>{{ $d->owner_email }}</td>
                                 <td>{{ $d->created_at->format('d F Y') }}</td>
                                 <x-acc-update-delete :id="$d->id" :$originRoute>
+                                    <x-slot:slot-outside>
+                                        <button class="btn btn-danger mb-2" wire:click="confirmGainAccess('{{ $d->id }}')">
+                                            <i class="fa fa-eye"></i>
+                                            <span class="ms-2">
+                                                Login
+                                            </span>
+                                        </button>
+                                    </x-slot:slot-outside>
                                     <button class="dropdown-item"
                                         wire:click="editPassword('{{ $d->id }}')">
                                         <i class="fa fa-key"></i>
@@ -77,6 +85,12 @@
             <div class="col-md-6">
                 <div class="mb-3">
                     <label class="form-label">Subdomain <x-acc-required /></label>
+                    <x-acc-input model="form.tenant_subdomain" placeholder="Sub Domain" icon="fa fa-globe" />
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="mb-3">
+                    <label class="form-label">Domain </label>
                     <x-acc-input model="form.tenant_domain" placeholder="Domain" icon="fa fa-globe" />
                 </div>
             </div>

@@ -16,6 +16,7 @@ class FormTenant extends Form implements FormCrudInterface
 {
     public $id;
     public $tenant_name;
+    public $tenant_subdomain;
     public $tenant_domain;
 
     public $user_id;
@@ -32,6 +33,7 @@ class FormTenant extends Form implements FormCrudInterface
 
         $this->id = $id;
         $this->tenant_name = $data->name;
+        $this->tenant_subdomain = $data->subdomain;
         $this->tenant_domain = $data->domain;
         $this->user_id = $user->id;
         $this->user_name = $user->name;
@@ -53,7 +55,8 @@ class FormTenant extends Form implements FormCrudInterface
     public function store() {
         $this->validate([
             'tenant_name' => 'required',
-            'tenant_domain' => 'required|regex:/^[a-z0-9]+(-[a-z0-9]+)*$/|unique:tenants,domain',
+            'tenant_subdomain' => 'required|regex:/^[a-z0-9]+(-[a-z0-9]+)*$/|unique:tenants,subdomain',
+            'tenant_domain' => 'nullable|regex:/^[a-z0-9]+(-[a-z0-9]+)*$/|unique:tenants,domain',
             'user_name' => 'required',
             'user_email' => 'required|email|unique:users,email',
             'user_password' => 'required',
@@ -65,12 +68,13 @@ class FormTenant extends Form implements FormCrudInterface
             // Create tenant
             $tenant = Tenant::create([
                 'name' => $this->tenant_name,
+                'subdomain' => $this->tenant_subdomain,
                 'domain' => $this->tenant_domain,
             ]);
 
             // Create owner role for tenant
             $role = Role::create([
-                'name' => $this->tenant_domain . '_owner',
+                'name' => $this->tenant_subdomain . '_owner',
                 'base_name' => 'owner',
                 'guard_name' => 'web',
                 'tenant_id' => $tenant->id,
@@ -78,7 +82,7 @@ class FormTenant extends Form implements FormCrudInterface
 
             // Create user role for tenant
             $role2 = Role::create([
-                'name' => $this->tenant_domain . '_user',
+                'name' => $this->tenant_subdomain . '_user',
                 'base_name' => 'user',
                 'guard_name' => 'web',
                 'tenant_id' => $tenant->id,
@@ -128,7 +132,8 @@ class FormTenant extends Form implements FormCrudInterface
     public function update() {
         $this->validate([
             'tenant_name' => 'required',
-            'tenant_domain' => 'required|regex:/^[a-z0-9]+(-[a-z0-9]+)*$/|unique:tenants,domain,' . $this->id,
+            'tenant_subdomain' => 'required|regex:/^[a-z0-9]+(-[a-z0-9]+)*$/|unique:tenants,subdomain,' . $this->id,
+            'tenant_domain' => 'nullable|regex:/^[a-z0-9]+(-[a-z0-9]+)*$/|unique:tenants,domain,' . $this->id,
             'user_name' => 'required',
             'user_email' => 'required|email|unique:users,email,' . $this->user_id,
         ]);
@@ -136,6 +141,7 @@ class FormTenant extends Form implements FormCrudInterface
         // Update tenant
         Tenant::find($this->id)->update([
             'name' => $this->tenant_name,
+            'subdomain' => $this->tenant_subdomain,
             'domain' => $this->tenant_domain,
         ]);
 

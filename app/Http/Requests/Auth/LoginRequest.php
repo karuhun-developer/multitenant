@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\Tenant;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -40,6 +41,28 @@ class LoginRequest extends FormRequest
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
+
+        // Check subdomain
+        $host = explode('.', $this->getHost());
+        $subdomain = $host[0];
+
+        // If subdomain is not empty, check if it is a valid tenant
+        if(count($host) > 1) {
+            $tenant = Tenant::where('subdomain', $subdomain)->first();
+
+            // If tenant is not found, throw exception
+            if (!$tenant) throw ValidationException::withMessages([
+                'email' => trans('auth.failed'),
+            ]);
+
+            // Check user is in tenant
+            $user = $tenant->users()->where('email', $this->string('email'))->first();
+
+            // If user is not found, throw exception
+            if (!$user) throw ValidationException::withMessages([
+                'email' => trans('auth.failed'),
+            ]);
+        }
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());

@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Cms;
 
+use Illuminate\Support\Facades\Crypt;
 use App\Enums\Tenant as EnumsTenant;
 use App\Livewire\Forms\Cms\FormTenant;
 use App\Models\Tenant as TenantModel;
+use Livewire\Attributes\On;
 use BaseComponent;
 
 class Tenant extends BaseComponent {
@@ -79,5 +81,29 @@ class Tenant extends BaseComponent {
         $this->closeModalUpdatePassword();
 
         $this->dispatch('alert', type: 'success', message: 'Password has been changed');
+    }
+
+    public function confirmGainAccess($id) {
+        $this->dispatch('confirm',
+            function: 'gain-access',
+            id: $id,
+            icon: 'question',
+            message: 'Are you sure you want to gain access to this tenant?'
+        );
+    }
+
+    #[On('gain-access')]
+    public function gainAccess($id) {
+        // Login
+        $tenant = TenantModel::find($id);
+        $user = $tenant->users()->where('is_owner', EnumsTenant::OWNER)->first();
+
+        // Redirect to tenant
+        $url = config('app.url') . '/redirect-login';
+        $url = str_replace('://', '://' . $tenant->subdomain . '.', $url);
+        $url .= '?user=' . Crypt::encryptString($user->id);
+
+        // Redirect in a new tab
+        return $this->redirect($url);
     }
 }
