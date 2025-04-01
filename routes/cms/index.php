@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 Route::group([
     'prefix' => 'cms',
     'as' => 'cms.',
-    'middleware' => ['auth', 'validate-role-permission', 'share-setting'],
+    'middleware' => ['auth', 'validate-role-permission'],
 ], function () {
 
     Route::get('/', App\Livewire\Cms\Dashboard::class)->name('dashboard');

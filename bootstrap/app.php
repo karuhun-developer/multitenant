@@ -22,7 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
 
-            Route::middleware('web')
+            Route::middleware(['web', 'share-setting'])
                 ->group(base_path('routes/web.php'));
         },
         health: '/up',
