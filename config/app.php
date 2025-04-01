@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Facade;
 
 return [
+    'main_domain' => env('APP_MAIN_DOMAIN', 'localhost'),
     'timezone' => env('APP_TIMEZONE', 'UTC'),
     'timezone_display' => 'Asia/Jakarta',
     'log' => env('APP_LOG', 'single'),

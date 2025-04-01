@@ -47,7 +47,7 @@ class LoginRequest extends FormRequest
         $subdomain = $host[0];
 
         // If subdomain is not empty, check if it is a valid tenant
-        if(count($host) > 1) {
+        if($subdomain !== config('app.main_domain')) {
             $tenant = Tenant::where('subdomain', $subdomain)->first();
 
             // If tenant is not found, throw exception
