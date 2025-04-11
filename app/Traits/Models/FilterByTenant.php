@@ -22,7 +22,9 @@ trait FilterByTenant
         });
 
         self::addGlobalScope('tenant', function ($builder) use ($currentTenant) {
-            $builder->where('tenant_id', $currentTenant);
+            // Get builder table name
+            $table = $builder->getModel()->getTable();
+            $builder->where($table . '.tenant_id', $currentTenant);
         });
     }
 }
