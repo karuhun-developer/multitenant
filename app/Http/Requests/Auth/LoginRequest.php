@@ -42,38 +42,55 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        $this->tenantLoginDomain($this->getHost());
+        RateLimiter::hit($this->throttleKey());
 
-        // Check subdomain
-        $host = explode('.', $this->getHost());
-        $subdomain = $host[0];
+        $host = $this->getHost();
 
-        // If subdomain is not empty, check if it is a valid tenant
-        if($subdomain !== config('app.main_domain')) {
-            $this->tenantLoginSubDomain($subdomain);
+        // Main domain login
+        if($host === config('app.main_domain')) {
+            $this->mainDomainLogin();
+        }
+
+        // Custom domain & subdomain login
+        if ($host !== config('app.main_domain')) {
+            $this->customDomainLogin($host);
+            $this->subDomainLogin($host);
+        }
+
+        RateLimiter::clear($this->throttleKey());
+    }
+
+    // Main domain login
+    protected function mainDomainLogin() {
+        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+            throw ValidationException::withMessages([
+                'email' => trans('auth.failed'),
+            ]);
         }
     }
 
-    protected function tenantLoginDomain($domain) {
+    // Custom domain login
+    protected function customDomainLogin($domain) {
         $tenant = Tenant::where('domain', $domain)->first();
 
-        // If tenant is not found, throw exception
-        if (!$tenant) throw ValidationException::withMessages([
-            'email' => trans('auth.failed'),
-        ]);
+        // If tenant is found, continue
+        if ($tenant) {
+            // Check user is in tenant
+            $user = $tenant->users()->where('email', $this->string('email'))->first();
 
-        // Check user is in tenant
-        $user = $tenant->users()->where('email', $this->string('email'))->first();
-
-        // If user is not found, throw exception
-        if (!$user) throw ValidationException::withMessages([
-            'email' => trans('auth.failed'),
-        ]);
-
-        $this->login();
+            // If user is not found, throw exception
+            if (!$user) throw ValidationException::withMessages([
+                'email' => trans('auth.failed'),
+            ]);
+        }
     }
 
-    protected function tenantLoginSubDomain($subdomain) {
+    // Subdomain login
+    protected function subDomainLogin($domain) {
+        $host = explode('.', $domain);
+        $subdomain = $host[0];
+
+        // If subdomain is not empty, check if it is a valid tenant
         $tenant = Tenant::where('subdomain', $subdomain)->first();
 
         // If tenant is not found, throw exception
@@ -88,20 +105,6 @@ class LoginRequest extends FormRequest
         if (!$user) throw ValidationException::withMessages([
             'email' => trans('auth.failed'),
         ]);
-
-        $this->login();
-    }
-
-    public function login() {
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
-
-            throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
-            ]);
-        }
-
-        RateLimiter::clear($this->throttleKey());
     }
 
     /**
