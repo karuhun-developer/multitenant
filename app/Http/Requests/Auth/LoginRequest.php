@@ -48,7 +48,7 @@ class LoginRequest extends FormRequest
 
         // Main domain login
         if($host === config('app.main_domain')) {
-            $this->mainDomainLogin();
+            $this->login();
         }
 
         // Custom domain & subdomain login
@@ -61,7 +61,7 @@ class LoginRequest extends FormRequest
     }
 
     // Main domain login
-    protected function mainDomainLogin() {
+    protected function login() {
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
@@ -82,6 +82,8 @@ class LoginRequest extends FormRequest
             if (!$user) throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
             ]);
+
+            $this->login();
         }
     }
 
@@ -105,6 +107,8 @@ class LoginRequest extends FormRequest
         if (!$user) throw ValidationException::withMessages([
             'email' => trans('auth.failed'),
         ]);
+
+        $this->login();
     }
 
     /**
