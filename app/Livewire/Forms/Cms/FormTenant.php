@@ -56,7 +56,7 @@ class FormTenant extends Form implements FormCrudInterface
         $this->validate([
             'tenant_name' => 'required',
             'tenant_subdomain' => 'required|regex:/^[a-z0-9]+(-[a-z0-9]+)*$/|unique:tenants,subdomain',
-            'tenant_domain' => 'nullable|regex:/^[a-z0-9]+(-[a-z0-9]+)*$/|unique:tenants,domain',
+            'tenant_domain' => 'nullable|unique:tenants,domain',
             'user_name' => 'required',
             'user_email' => 'required|email|unique:users,email',
             'user_password' => 'required',
@@ -133,7 +133,7 @@ class FormTenant extends Form implements FormCrudInterface
         $this->validate([
             'tenant_name' => 'required',
             'tenant_subdomain' => 'required|regex:/^[a-z0-9]+(-[a-z0-9]+)*$/|unique:tenants,subdomain,' . $this->id,
-            'tenant_domain' => 'nullable|regex:/^[a-z0-9]+(-[a-z0-9]+)*$/|unique:tenants,domain,' . $this->id,
+            'tenant_domain' => 'nullable|unique:tenants,domain,' . $this->id,
             'user_name' => 'required',
             'user_email' => 'required|email|unique:users,email,' . $this->user_id,
         ]);
