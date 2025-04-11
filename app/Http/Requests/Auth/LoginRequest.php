@@ -42,28 +42,57 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
+        $this->tenantLoginDomain($this->getHost());
+
         // Check subdomain
         $host = explode('.', $this->getHost());
         $subdomain = $host[0];
 
         // If subdomain is not empty, check if it is a valid tenant
         if($subdomain !== config('app.main_domain')) {
-            $tenant = Tenant::where('subdomain', $subdomain)->first();
-
-            // If tenant is not found, throw exception
-            if (!$tenant) throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
-            ]);
-
-            // Check user is in tenant
-            $user = $tenant->users()->where('email', $this->string('email'))->first();
-
-            // If user is not found, throw exception
-            if (!$user) throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
-            ]);
+            $this->tenantLoginSubDomain($subdomain);
         }
+    }
 
+    protected function tenantLoginDomain($domain) {
+        $tenant = Tenant::where('domain', $domain)->first();
+
+        // If tenant is not found, throw exception
+        if (!$tenant) throw ValidationException::withMessages([
+            'email' => trans('auth.failed'),
+        ]);
+
+        // Check user is in tenant
+        $user = $tenant->users()->where('email', $this->string('email'))->first();
+
+        // If user is not found, throw exception
+        if (!$user) throw ValidationException::withMessages([
+            'email' => trans('auth.failed'),
+        ]);
+
+        $this->login();
+    }
+
+    protected function tenantLoginSubDomain($subdomain) {
+        $tenant = Tenant::where('subdomain', $subdomain)->first();
+
+        // If tenant is not found, throw exception
+        if (!$tenant) throw ValidationException::withMessages([
+            'email' => trans('auth.failed'),
+        ]);
+
+        // Check user is in tenant
+        $user = $tenant->users()->where('email', $this->string('email'))->first();
+
+        // If user is not found, throw exception
+        if (!$user) throw ValidationException::withMessages([
+            'email' => trans('auth.failed'),
+        ]);
+
+        $this->login();
+    }
+
+    public function login() {
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
