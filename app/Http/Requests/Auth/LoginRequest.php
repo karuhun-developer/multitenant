@@ -47,12 +47,14 @@ class LoginRequest extends FormRequest
         $host = $this->getHost();
 
         // Main domain login
-        if($host === config('app.main_domain')) {
-            $this->login();
+        if(!auth()->check()) {
+            if($host === config('app.main_domain')) {
+                $this->login();
+            }
         }
 
         // Custom domain & subdomain login
-        if ($host !== config('app.main_domain')) {
+        if(!auth()->check()) {
             $this->customDomainLogin($host);
             $this->subDomainLogin($host);
         }
